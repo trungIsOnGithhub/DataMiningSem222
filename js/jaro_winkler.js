@@ -3,8 +3,11 @@ function jaro(str1, str2) { //similarity function, different from distance funct
 
     let len1 = str1.length;
     let len2 = str2.length;
-    let max_dist = Math.floor(Math.max(len1,len2) / 2.0) - 1;
 
+    if (len1 == 0 || len2 == 0)
+        return 0.0;
+
+    let max_dist = Math.floor(Math.max(len1,len2) / 2) - 1;
     let num_match = 0;
 
     let has_matched_1 = Array(len1).fill(false);
@@ -13,7 +16,7 @@ function jaro(str1, str2) { //similarity function, different from distance funct
     for(let i = 0; i < len1; ++i) {
         for(let j = Math.max(0, i-max_dist);
                 j < Math.min(len2, i+max_dist+1); ++j) {
-                    if(str1.charAt(i) == str2.charAt(j) && matched_index_2[j] === -1) {
+                    if(str1.charAt(i) === str2.charAt(j) && matched_index_2[j] === -1) {
                         has_matched_1[i] = true;
                         matched_index_2[j] = i;
                         ++num_match;
@@ -29,11 +32,13 @@ function jaro(str1, str2) { //similarity function, different from distance funct
 
     for(let i = 0; i < len1; ++i) {
         if(has_matched_1[i]) {
-            while(matched_index_2[curr_idx_2] != i)
+            while(curr_idx_2 < len2 && matched_index_2[curr_idx_2] != i)
                 ++curr_idx_2;
 
-            if(i != curr_idx_2 )
+            if(curr_idx_2 < len2 && i != curr_idx_2 )
                 tranpos += 1.0;
+
+            ++curr_idx_2;
         }
     }
 
